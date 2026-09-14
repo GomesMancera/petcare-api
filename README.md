@@ -615,9 +615,11 @@ Portanto, todos os integrantes devem estar preparados para explicar o código en
 
 # 📹 Demonstração
 
-A entrega também contempla um vídeo demonstrando a aplicação funcionando e apresentando suas principais funcionalidades.
+Vídeo demonstrando a aplicação em funcionamento (Sprint 3 — Java Advanced):
 
-O vídeo deve demonstrar a **aplicação efetivamente entregue no repositório**, incluindo as principais funcionalidades implementadas.
+**https://youtu.be/oz2-PCyDAsY**
+
+O vídeo apresenta as principais funcionalidades da aplicação web entregue neste repositório.
 
 **Tempo máximo indicado no documento da Sprint: 10 minutos.**
 
