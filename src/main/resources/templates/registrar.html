@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>PetCareIA+ - Criar conta</title>
+    <link rel="stylesheet" th:href="@{/css/estilo.css}">
+</head>
+<body>
+<div class="container card-central">
+    <div class="card">
+        <h1 style="text-align:center;">🐾 Criar conta de Tutor</h1>
+
+        <p class="erro" th:if="${erro}" th:text="${erro}"></p>
+
+        <form th:action="@{/registrar}" method="post">
+            <input type="text" name="nome" placeholder="Nome completo" required>
+            <input type="email" name="email" placeholder="E-mail" required>
+            <input type="password" name="senha" placeholder="Senha (mín. 6 caracteres)" minlength="6" required>
+            <button type="submit">Criar conta</button>
+        </form>
+
+        <p style="text-align:center; margin-top:16px;">
+            Já tem conta? <a th:href="@{/login}">Entrar</a>
+        </p>
+    </div>
+</div>
+</body>
+</html>

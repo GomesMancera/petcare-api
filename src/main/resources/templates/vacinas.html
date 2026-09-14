@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>PetCareIA+ - Vacinas</title>
+    <link rel="stylesheet" th:href="@{/css/estilo.css}">
+</head>
+<body>
+<div class="topo">
+    <strong>🐾 PetCareIA+</strong>
+    <div>
+        <a th:href="@{/dashboard}">Dashboard</a>
+        <a th:href="@{/pets}">Pets</a>
+        <a th:href="@{/consultas}">Consultas</a>
+        <a th:href="@{/vacinas}">Vacinas</a>
+        <a th:href="@{/logout}">Sair</a>
+    </div>
+</div>
+
+<div class="container">
+    <h1>Aplicar vacina</h1>
+
+    <p class="erro" th:if="${erro}" th:text="${erro}"></p>
+    <p class="sucesso" th:if="${sucesso}" th:text="${sucesso}"></p>
+
+    <div class="card">
+        <h2>Registrar aplicação</h2>
+        <p class="dica">A próxima dose é calculada automaticamente (V10/V8 = 21 dias; Antirrábica = 365 dias).</p>
+        <form th:action="@{/vacinas/aplicar}" method="post">
+            <label>Pet</label>
+            <select name="petId" required>
+                <option value="">Selecione o pet</option>
+                <option th:each="pet : ${pets}" th:value="${pet.id}" th:text="${pet.nome}"></option>
+            </select>
+            <label>Vacina</label>
+            <select name="nome" required>
+                <option value="">Selecione a vacina</option>
+                <option value="V10">V10</option>
+                <option value="V8">V8</option>
+                <option value="Antirrabica">Antirrábica</option>
+                <option value="Giardia">Giardia</option>
+                <option value="Gripe canina">Gripe canina</option>
+            </select>
+            <label>Data da aplicação</label>
+            <input type="date" name="dataAplicacao" required>
+            <button type="submit">Aplicar vacina</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Carteira de vacinação</h2>
+        <table>
+            <tr>
+                <th>Pet</th>
+                <th>Vacina</th>
+                <th>Aplicação</th>
+                <th>Próxima dose</th>
+            </tr>
+            <tr th:each="v : ${vacinas}">
+                <td th:text="${v.pet.nome}"></td>
+                <td th:text="${v.nome}"></td>
+                <td th:text="${#temporals.format(v.dataAplicacao, 'dd/MM/yyyy')}"></td>
+                <td th:text="${v.dataProximaDose != null ? #temporals.format(v.dataProximaDose, 'dd/MM/yyyy') : '-'}"></td>
+            </tr>
+            <tr th:if="${vacinas.isEmpty()}">
+                <td colspan="4">Nenhuma vacina registrada.</td>
+            </tr>
+        </table>
+    </div>
+</div>
+</body>
+</html>

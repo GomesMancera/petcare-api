@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>PetCareIA+ - Consultas</title>
+    <link rel="stylesheet" th:href="@{/css/estilo.css}">
+</head>
+<body>
+<div class="topo">
+    <strong>🐾 PetCareIA+</strong>
+    <div>
+        <a th:href="@{/dashboard}">Dashboard</a>
+        <a th:href="@{/pets}">Pets</a>
+        <a th:href="@{/consultas}">Consultas</a>
+        <a th:href="@{/vacinas}">Vacinas</a>
+        <a th:href="@{/logout}">Sair</a>
+    </div>
+</div>
+
+<div class="container">
+    <h1>Agendar consulta</h1>
+
+    <p class="erro" th:if="${erro}" th:text="${erro}"></p>
+    <p class="sucesso" th:if="${sucesso}" th:text="${sucesso}"></p>
+
+    <div class="card">
+        <h2>Novo agendamento</h2>
+        <p class="dica">Não é permitido outro horário para o mesmo pet em menos de 30 minutos.</p>
+        <form th:action="@{/consultas/agendar}" method="post">
+            <label>Pet</label>
+            <select name="petId" required>
+                <option value="">Selecione o pet</option>
+                <option th:each="pet : ${pets}" th:value="${pet.id}" th:text="${pet.nome}"></option>
+            </select>
+            <label>Data e hora</label>
+            <input type="datetime-local" name="dataHora" required>
+            <label>Motivo</label>
+            <input type="text" name="motivo" placeholder="Ex.: Check-up anual" required>
+            <label>Observações (opcional)</label>
+            <input type="text" name="observacoes" placeholder="Observações">
+            <button type="submit">Agendar consulta</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Consultas cadastradas</h2>
+        <table>
+            <tr>
+                <th>Pet</th>
+                <th>Data/Hora</th>
+                <th>Motivo</th>
+                <th>Status</th>
+            </tr>
+            <tr th:each="c : ${consultas}">
+                <td th:text="${c.pet.nome}"></td>
+                <td th:text="${#temporals.format(c.dataHora, 'dd/MM/yyyy HH:mm')}"></td>
+                <td th:text="${c.motivo}"></td>
+                <td th:text="${c.status}"></td>
+            </tr>
+            <tr th:if="${consultas.isEmpty()}">
+                <td colspan="4">Nenhuma consulta agendada.</td>
+            </tr>
+        </table>
+    </div>
+</div>
+</body>
+</html>
