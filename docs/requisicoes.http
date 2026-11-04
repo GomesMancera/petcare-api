@@ -1,0 +1,44 @@
+### Requisições de exemplo (IntelliJ HTTP Client / extensão REST Client do VS Code)
+### Troque a variável de host pelo endereço do deploy.
+
+@host = http://localhost:8080
+
+### 1) Cadastro público (sempre cria TUTOR, mesmo que o corpo traga "perfil")
+POST {{host}}/api/auth/registrar
+Content-Type: application/json
+
+{ "nome": "Maria Tutora", "email": "maria@exemplo.com", "senha": "123456", "perfil": "CLINICA" }
+
+### 2) Login
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "maria@exemplo.com", "senha": "123456" }
+
+### 3) Renovar sessão
+POST {{host}}/api/auth/refresh
+Content-Type: application/json
+
+{ "refreshToken": "COLE_AQUI_O_refreshToken" }
+
+### 4) Horários livres do dia
+GET {{host}}/api/consultas/horarios-disponiveis?data=2026-11-10
+Authorization: Bearer COLE_AQUI_O_TOKEN
+
+### 5) Agendar (repita para ver o 409)
+POST {{host}}/api/consultas/agendar
+Authorization: Bearer COLE_AQUI_O_TOKEN
+Content-Type: application/json
+
+{ "petId": 1, "dataHora": "2026-11-10T14:30:00", "motivo": "Check-up" }
+
+### 6) Tutor tentando marcar como realizada (esperado: 403)
+PATCH {{host}}/api/consultas/1/realizar
+Authorization: Bearer COLE_AQUI_O_TOKEN
+
+### 7) Rota de admin (só CLINICA)
+POST {{host}}/api/admin/clinicas
+Authorization: Bearer COLE_AQUI_O_TOKEN_DA_CLINICA
+Content-Type: application/json
+
+{ "nome": "Clínica Centro", "email": "centro@clinica.com", "senha": "123456" }

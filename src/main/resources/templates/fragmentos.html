@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="cabecalho(titulo)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title th:text="'PetCareIA+ - ' + ${titulo}">PetCareIA+</title>
+    <link rel="stylesheet" th:href="@{/css/estilo.css}">
+</head>
+<body>
+
+<!-- Menu superior compartilhado por todas as páginas autenticadas -->
+<nav class="topo" th:fragment="menu(ativo)">
+    <strong class="marca">🐾 PetCareIA+</strong>
+    <div class="links">
+        <a th:href="@{/dashboard}" th:classappend="${ativo == 'dashboard'} ? 'ativo'">Dashboard</a>
+        <a th:href="@{/pets}" th:classappend="${ativo == 'pets'} ? 'ativo'">Pets</a>
+        <a th:href="@{/consultas}" th:classappend="${ativo == 'consultas'} ? 'ativo'">Consultas</a>
+        <a th:href="@{/vacinas}" th:classappend="${ativo == 'vacinas'} ? 'ativo'">Vacinas</a>
+        <span class="saudacao" th:if="${usuario != null}" th:text="${usuario.nome}">Usuário</span>
+        <form th:action="@{/logout}" method="post" class="form-sair">
+            <button type="submit" class="btn-link">Sair</button>
+        </form>
+    </div>
+</nav>
+
+<!-- Mensagens de erro/sucesso vindas do servidor (flash attributes) -->
+<div th:fragment="mensagens">
+    <p class="erro" role="alert" th:if="${erro}" th:text="${erro}"></p>
+    <p class="sucesso" role="status" th:if="${sucesso}" th:text="${sucesso}"></p>
+</div>
+
+</body>
+</html>

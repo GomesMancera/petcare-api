@@ -1,30 +1,28 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>PetCareIA+ - Login</title>
-    <link rel="stylesheet" th:href="@{/css/estilo.css}">
-</head>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecalho('Login')}"></head>
 <body>
-<div class="container card-central">
+<main class="container card-central">
     <div class="card">
-        <h1 style="text-align:center;">🐾 PetCareIA+</h1>
-        <p style="text-align:center; color:#666;">Acesse sua conta</p>
+        <h1 class="centro">🐾 PetCareIA+</h1>
+        <p class="centro suave">Acesse sua conta</p>
 
-        <p class="erro" th:if="${param.error}">E-mail ou senha inválidos.</p>
+        <p class="erro" role="alert" th:if="${param.error}">E-mail ou senha inválidos.</p>
         <p class="sucesso" th:if="${param.registrado}">Conta criada! Faça login.</p>
         <p class="sucesso" th:if="${param.logout}">Você saiu da sua conta.</p>
 
         <form th:action="@{/login}" method="post">
-            <input type="email" name="username" placeholder="E-mail" required>
-            <input type="password" name="password" placeholder="Senha" required>
+            <label for="username">E-mail</label>
+            <input id="username" type="email" name="username" autocomplete="username" required>
+            <label for="password">Senha</label>
+            <input id="password" type="password" name="password" autocomplete="current-password" required>
             <button type="submit">Entrar</button>
         </form>
 
-        <p style="text-align:center; margin-top:16px;">
+        <p class="centro rodape-card">
             Não tem conta? <a th:href="@{/registrar}">Cadastre-se</a>
         </p>
     </div>
-</div>
+</main>
 </body>
 </html>

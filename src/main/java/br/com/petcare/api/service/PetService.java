@@ -3,12 +3,13 @@ package br.com.petcare.api.service;
 import br.com.petcare.api.dto.PetDto;
 import br.com.petcare.api.entity.Pet;
 import br.com.petcare.api.entity.Usuario;
-import br.com.petcare.api.enums.Perfil;
-import br.com.petcare.api.exception.AcessoNegadoException;
 import br.com.petcare.api.exception.ResourceNotFoundException;
+import br.com.petcare.api.repository.ConsultaRepository;
 import br.com.petcare.api.repository.PetRepository;
+import br.com.petcare.api.repository.VacinaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,9 +18,12 @@ import java.util.List;
 public class PetService {
 
     private final PetRepository petRepository;
+    private final ConsultaRepository consultaRepository;
+    private final VacinaRepository vacinaRepository;
+    private final AutorizacaoService autorizacaoService;
 
     public List<Pet> listar(Usuario usuarioLogado) {
-        if (usuarioLogado.getPerfil() == Perfil.CLINICA) {
+        if (usuarioLogado.isClinica()) {
             return petRepository.findAll();
         }
         return petRepository.findByTutorId(usuarioLogado.getId());
@@ -28,7 +32,7 @@ public class PetService {
     public Pet buscarPorId(Usuario usuarioLogado, Long id) {
         Pet pet = petRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pet não encontrado: " + id));
-        validarPosse(usuarioLogado, pet);
+        autorizacaoService.validarPosse(usuarioLogado, pet.getTutor().getId(), "este pet");
         return pet;
     }
 
@@ -54,22 +58,13 @@ public class PetService {
         return petRepository.save(pet);
     }
 
+    /** Remove também o histórico do pet (consultas e vacinas); sem isso a chave estrangeira bloqueia a exclusão. */
+    @Transactional
     public void excluir(Usuario usuarioLogado, Long id) {
         Pet pet = buscarPorId(usuarioLogado, id);
+        consultaRepository.deleteByPetId(pet.getId());
+        vacinaRepository.deleteByPetId(pet.getId());
         petRepository.delete(pet);
-    }
-
-    /**
-     * Regra de segurança: um TUTOR só pode acessar/alterar os próprios pets.
-     * A CLINICA tem acesso a todos os pets do sistema.
-     */
-    private void validarPosse(Usuario usuarioLogado, Pet pet) {
-        boolean ehTutorDono = pet.getTutor().getId().equals(usuarioLogado.getId());
-        boolean ehClinica = usuarioLogado.getPerfil() == Perfil.CLINICA;
-
-        if (!ehTutorDono && !ehClinica) {
-            throw new AcessoNegadoException("Você não tem permissão para acessar este pet");
-        }
     }
 
     public static PetDto.Response toResponse(Pet pet) {

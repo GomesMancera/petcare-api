@@ -1,28 +1,27 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>PetCareIA+ - Criar conta</title>
-    <link rel="stylesheet" th:href="@{/css/estilo.css}">
-</head>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecalho('Criar conta')}"></head>
 <body>
-<div class="container card-central">
+<main class="container card-central">
     <div class="card">
-        <h1 style="text-align:center;">🐾 Criar conta de Tutor</h1>
+        <h1 class="centro">🐾 Criar conta de Tutor</h1>
 
-        <p class="erro" th:if="${erro}" th:text="${erro}"></p>
+        <p class="erro" role="alert" th:if="${erro}" th:text="${erro}"></p>
 
         <form th:action="@{/registrar}" method="post">
-            <input type="text" name="nome" placeholder="Nome completo" required>
-            <input type="email" name="email" placeholder="E-mail" required>
-            <input type="password" name="senha" placeholder="Senha (mín. 6 caracteres)" minlength="6" required>
+            <label for="nome">Nome completo</label>
+            <input id="nome" type="text" name="nome" th:value="${registroRequest != null} ? ${registroRequest.nome} : ''" required>
+            <label for="email">E-mail</label>
+            <input id="email" type="email" name="email" th:value="${registroRequest != null} ? ${registroRequest.email} : ''" required>
+            <label for="senha">Senha (mínimo 6 caracteres)</label>
+            <input id="senha" type="password" name="senha" minlength="6" autocomplete="new-password" required>
             <button type="submit">Criar conta</button>
         </form>
 
-        <p style="text-align:center; margin-top:16px;">
+        <p class="centro rodape-card">
             Já tem conta? <a th:href="@{/login}">Entrar</a>
         </p>
     </div>
-</div>
+</main>
 </body>
 </html>

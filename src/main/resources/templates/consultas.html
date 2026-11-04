@@ -1,67 +1,122 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>PetCareIA+ - Consultas</title>
-    <link rel="stylesheet" th:href="@{/css/estilo.css}">
-</head>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecalho('Consultas')}"></head>
 <body>
-<div class="topo">
-    <strong>🐾 PetCareIA+</strong>
-    <div>
-        <a th:href="@{/dashboard}">Dashboard</a>
-        <a th:href="@{/pets}">Pets</a>
-        <a th:href="@{/consultas}">Consultas</a>
-        <a th:href="@{/vacinas}">Vacinas</a>
-        <a th:href="@{/logout}">Sair</a>
-    </div>
-</div>
+<nav th:replace="~{fragmentos :: menu('consultas')}"></nav>
 
-<div class="container">
-    <h1>Agendar consulta</h1>
-
-    <p class="erro" th:if="${erro}" th:text="${erro}"></p>
-    <p class="sucesso" th:if="${sucesso}" th:text="${sucesso}"></p>
+<main class="container">
+    <h1>Consultas</h1>
+    <div th:replace="~{fragmentos :: mensagens}"></div>
 
     <div class="card">
-        <h2>Novo agendamento</h2>
-        <p class="dica">Não é permitido outro horário para o mesmo pet em menos de 30 minutos.</p>
-        <form th:action="@{/consultas/agendar}" method="post">
-            <label>Pet</label>
-            <select name="petId" required>
-                <option value="">Selecione o pet</option>
-                <option th:each="pet : ${pets}" th:value="${pet.id}" th:text="${pet.nome}"></option>
-            </select>
-            <label>Data e hora</label>
-            <input type="datetime-local" name="dataHora" required>
-            <label>Motivo</label>
-            <input type="text" name="motivo" placeholder="Ex.: Check-up anual" required>
-            <label>Observações (opcional)</label>
-            <input type="text" name="observacoes" placeholder="Observações">
+        <h2>Agendar consulta</h2>
+
+        <p class="suave" th:if="${pets.isEmpty()}">
+            Você precisa cadastrar um pet antes de agendar. <a th:href="@{/pets}">Cadastrar pet</a>
+        </p>
+
+        <form th:unless="${pets.isEmpty()}" th:action="@{/consultas/agendar}" method="post" class="grid-form">
+            <div>
+                <label for="petId">Pet</label>
+                <select id="petId" name="petId" required>
+                    <option th:each="p : ${pets}" th:value="${p.id}" th:text="${p.nome}"></option>
+                </select>
+            </div>
+            <div>
+                <label for="data">Data</label>
+                <input id="data" type="date" required>
+            </div>
+            <div>
+                <label for="hora">Horário (atendimento 08:00–18:00)</label>
+                <select id="hora" th:data-url="@{/consultas/horarios}" required disabled>
+                    <option value="">Escolha a data primeiro</option>
+                </select>
+            </div>
+            <div>
+                <label for="motivo">Motivo</label>
+                <input id="motivo" type="text" name="motivo" maxlength="500" required>
+            </div>
+            <div class="largura-total">
+                <label for="observacoes">Observações (opcional)</label>
+                <input id="observacoes" type="text" name="observacoes" maxlength="1000">
+            </div>
+            <input type="hidden" name="dataHora" id="dataHora">
             <button type="submit">Agendar consulta</button>
         </form>
     </div>
 
     <div class="card">
-        <h2>Consultas cadastradas</h2>
-        <table>
-            <tr>
-                <th>Pet</th>
-                <th>Data/Hora</th>
-                <th>Motivo</th>
-                <th>Status</th>
-            </tr>
-            <tr th:each="c : ${consultas}">
-                <td th:text="${c.pet.nome}"></td>
-                <td th:text="${#temporals.format(c.dataHora, 'dd/MM/yyyy HH:mm')}"></td>
-                <td th:text="${c.motivo}"></td>
-                <td th:text="${c.status}"></td>
-            </tr>
-            <tr th:if="${consultas.isEmpty()}">
-                <td colspan="4">Nenhuma consulta agendada.</td>
-            </tr>
-        </table>
+        <h2>Histórico e agenda</h2>
+        <div class="tabela-scroll">
+            <table>
+                <thead><tr><th>Data/Hora</th><th>Pet</th><th>Motivo</th><th>Status</th><th>Ações</th></tr></thead>
+                <tbody>
+                <tr th:each="c : ${consultas}">
+                    <td th:text="${#temporals.format(c.dataHora(), 'dd/MM/yyyy HH:mm')}"></td>
+                    <td th:text="${c.petNome()}"></td>
+                    <td th:text="${c.motivo()}"></td>
+                    <td><span class="selo" th:classappend="'selo-' + ${c.status().name().toLowerCase()}" th:text="${c.status()}"></span></td>
+                    <td class="acoes">
+                        <form th:if="${c.status().name() == 'AGENDADA' and usuario.clinica}"
+                              th:action="@{/consultas/{id}/realizar(id=${c.id()})}" method="post">
+                            <button type="submit" class="pequeno">Marcar realizada</button>
+                        </form>
+                        <form th:if="${c.status().name() == 'AGENDADA'}"
+                              th:action="@{/consultas/{id}/cancelar(id=${c.id()})}" method="post"
+                              onsubmit="return confirm('Cancelar esta consulta?');">
+                            <button type="submit" class="btn-excluir">Cancelar</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${consultas.isEmpty()}">
+                    <td colspan="5" class="suave">Nenhuma consulta ainda.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
+</main>
+
+<script>
+    (function () {
+        var data = document.getElementById('data');
+        var hora = document.getElementById('hora');
+        var dataHora = document.getElementById('dataHora');
+        if (!data || !hora) { return; }
+
+        data.min = new Date().toLocaleDateString('en-CA'); // hoje, yyyy-mm-dd no fuso local
+
+        function limpar(texto) {
+            hora.innerHTML = '';
+            var opcao = document.createElement('option');
+            opcao.value = '';
+            opcao.textContent = texto;
+            hora.appendChild(opcao);
+            dataHora.value = '';
+        }
+
+        data.addEventListener('change', function () {
+            if (!data.value) { hora.disabled = true; limpar('Escolha a data primeiro'); return; }
+            limpar('Carregando horários...');
+            fetch(hora.dataset.url + '?data=' + encodeURIComponent(data.value), { headers: { 'Accept': 'application/json' } })
+                .then(function (resposta) { return resposta.json(); })
+                .then(function (horarios) {
+                    limpar(horarios.length ? 'Selecione um horário' : 'Sem horários livres neste dia');
+                    hora.disabled = horarios.length === 0;
+                    horarios.forEach(function (h) {
+                        var opcao = document.createElement('option');
+                        opcao.value = h;
+                        opcao.textContent = h;
+                        hora.appendChild(opcao);
+                    });
+                })
+                .catch(function () { hora.disabled = true; limpar('Erro ao carregar horários'); });
+        });
+
+        hora.addEventListener('change', function () {
+            dataHora.value = hora.value ? data.value + 'T' + hora.value : '';
+        });
+    })();
+</script>
 </body>
 </html>

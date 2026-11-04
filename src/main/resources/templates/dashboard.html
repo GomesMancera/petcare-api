@@ -1,26 +1,14 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>PetCareIA+ - Dashboard</title>
-    <link rel="stylesheet" th:href="@{/css/estilo.css}">
-</head>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecalho('Dashboard')}"></head>
 <body>
-<div class="topo">
-    <strong>🐾 PetCareIA+</strong>
-    <div>
-        <span th:text="'Olá, ' + ${usuario.nome}"></span>
-        <a th:href="@{/pets}">Pets</a>
-        <a th:href="@{/consultas}">Consultas</a>
-        <a th:href="@{/vacinas}">Vacinas</a>
-        <a th:href="@{/logout}">Sair</a>
-    </div>
-</div>
+<nav th:replace="~{fragmentos :: menu('dashboard')}"></nav>
 
-<div class="container">
+<main class="container">
     <h1>Dashboard</h1>
+    <div th:replace="~{fragmentos :: mensagens}"></div>
 
-    <div class="grid-stats">
+    <section class="grid-stats" aria-label="Resumo">
         <div class="stat">
             <div class="valor" th:text="${dados.quantidadePets()}">0</div>
             <div class="rotulo">🐾 Pets cadastrados</div>
@@ -37,22 +25,32 @@
             <div class="valor" th:text="${dados.ultimaConsulta() != null ? #temporals.format(dados.ultimaConsulta(), 'dd/MM/yyyy') : '-'}">-</div>
             <div class="rotulo">❤️ Última consulta</div>
         </div>
+    </section>
+
+    <div class="atalhos">
+        <a class="botao" th:href="@{/consultas}">📅 Agendar consulta</a>
+        <a class="botao secundario" th:href="@{/vacinas}">💉 Registrar vacina</a>
+        <a class="botao secundario" th:href="@{/pets}">🐾 Meus pets</a>
     </div>
 
     <div class="card">
         <h2>Próximas consultas agendadas</h2>
-        <table>
-            <tr><th>Pet</th><th>Data/Hora</th><th>Motivo</th></tr>
-            <tr th:each="c : ${dados.agendaProximosSete()}">
-                <td th:text="${c.petNome()}"></td>
-                <td th:text="${#temporals.format(c.dataHora(), 'dd/MM/yyyy HH:mm')}"></td>
-                <td th:text="${c.motivo()}"></td>
-            </tr>
-            <tr th:if="${dados.agendaProximosSete().isEmpty()}">
-                <td colspan="3">Nenhuma consulta agendada.</td>
-            </tr>
-        </table>
+        <div class="tabela-scroll">
+            <table>
+                <thead><tr><th>Pet</th><th>Data/Hora</th><th>Motivo</th></tr></thead>
+                <tbody>
+                <tr th:each="c : ${dados.agendaProximosSete()}">
+                    <td th:text="${c.petNome()}"></td>
+                    <td th:text="${#temporals.format(c.dataHora(), 'dd/MM/yyyy HH:mm')}"></td>
+                    <td th:text="${c.motivo()}"></td>
+                </tr>
+                <tr th:if="${dados.agendaProximosSete().isEmpty()}">
+                    <td colspan="3" class="suave">Nenhuma consulta agendada.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
+</main>
 </body>
 </html>

@@ -7,10 +7,12 @@ import br.com.petcare.api.service.ConsultaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -23,6 +25,13 @@ public class ConsultaController {
     @GetMapping
     public List<ConsultaDto.Response> listar(@AuthenticationPrincipal Usuario usuario) {
         return consultaService.listar(usuario).stream().map(ConsultaService::toResponse).toList();
+    }
+
+    /** Horários livres (HH:mm) no dia informado: o app só deve oferecer estes ao usuário. */
+    @GetMapping("/horarios-disponiveis")
+    public List<String> horariosDisponiveis(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data) {
+        return consultaService.horariosDisponiveis(data);
     }
 
     @GetMapping("/{id}")

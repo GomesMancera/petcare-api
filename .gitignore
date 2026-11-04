@@ -24,5 +24,7 @@ Thumbs.db
 
 # Variáveis de ambiente sensíveis (se algum dia criarem um .env local)
 .env
-application-secrets.yml
-**/application-secrets.yml
+# Segredos locais
+.env
+*.env
+!.env.example

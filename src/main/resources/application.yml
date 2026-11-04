@@ -1,31 +1,26 @@
+# Nenhum segredo fica neste arquivo: tudo vem de variáveis de ambiente (ou do arquivo .env local, que NÃO vai pro Git).
+# Veja o .env.example para a lista completa.
 server:
-  port: 8080
+  port: ${PORT:8080}
+  forward-headers-strategy: framework   # necessário atrás de proxy HTTPS (Render, Azure, etc.)
 
 spring:
   application:
     name: petcare-api
 
+  config:
+    import: optional:file:.env[.properties]
+
   datasource:
-    # Preencha com suas credenciais Oracle (NÃO commite senha real)
-    url: jdbc:oracle:thin:@oracle.fiap.com.br:1521:orcl
-    username: ${ORACLE_USER:SEU_USUARIO_ORACLE}
-    password: ${ORACLE_PASSWORD:SUA_SENHA_ORACLE}
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     driver-class-name: oracle.jdbc.OracleDriver
-    hikari:
-      maximum-pool-size: 1
-      minimum-idle: 0
-      connection-timeout: 60000
-      idle-timeout: 10000
-      max-lifetime: 30000
-      initialization-fail-timeout: 1
 
   jpa:
     hibernate:
       ddl-auto: validate
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
+    show-sql: ${SHOW_SQL:false}
 
   flyway:
     enabled: true
@@ -33,9 +28,22 @@ spring:
     baseline-on-migrate: true
     baseline-version: 0
 
+  mvc:
+    format:
+      date: iso
+      time: iso
+      date-time: iso
+
   thymeleaf:
-    cache: false
+    cache: ${THYMELEAF_CACHE:true}
 
 jwt:
-  secret: ${JWT_SECRET:altere-esta-chave-secreta-para-uma-string-longa-e-aleatoria}
-  expiration-ms: 86400000
+  secret: ${JWT_SECRET}
+  expiration-ms: ${JWT_EXPIRATION_MS:3600000}               # access token: 1 hora
+  refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000}  # refresh token: 7 dias
+
+app:
+  admin:
+    nome: ${ADMIN_NOME:Administrador PetCare}
+    email: ${ADMIN_EMAIL:}
+    senha: ${ADMIN_SENHA:}

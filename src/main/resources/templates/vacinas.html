@@ -1,72 +1,79 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>PetCareIA+ - Vacinas</title>
-    <link rel="stylesheet" th:href="@{/css/estilo.css}">
-</head>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecalho('Vacinas')}"></head>
 <body>
-<div class="topo">
-    <strong>🐾 PetCareIA+</strong>
-    <div>
-        <a th:href="@{/dashboard}">Dashboard</a>
-        <a th:href="@{/pets}">Pets</a>
-        <a th:href="@{/consultas}">Consultas</a>
-        <a th:href="@{/vacinas}">Vacinas</a>
-        <a th:href="@{/logout}">Sair</a>
-    </div>
-</div>
+<nav th:replace="~{fragmentos :: menu('vacinas')}"></nav>
 
-<div class="container">
-    <h1>Aplicar vacina</h1>
+<main class="container">
+    <h1>Carteira de Vacinação</h1>
+    <div th:replace="~{fragmentos :: mensagens}"></div>
 
-    <p class="erro" th:if="${erro}" th:text="${erro}"></p>
-    <p class="sucesso" th:if="${sucesso}" th:text="${sucesso}"></p>
-
-    <div class="card">
-        <h2>Registrar aplicação</h2>
-        <p class="dica">A próxima dose é calculada automaticamente (V10/V8 = 21 dias; Antirrábica = 365 dias).</p>
-        <form th:action="@{/vacinas/aplicar}" method="post">
-            <label>Pet</label>
-            <select name="petId" required>
-                <option value="">Selecione o pet</option>
-                <option th:each="pet : ${pets}" th:value="${pet.id}" th:text="${pet.nome}"></option>
-            </select>
-            <label>Vacina</label>
-            <select name="nome" required>
-                <option value="">Selecione a vacina</option>
-                <option value="V10">V10</option>
-                <option value="V8">V8</option>
-                <option value="Antirrabica">Antirrábica</option>
-                <option value="Giardia">Giardia</option>
-                <option value="Gripe canina">Gripe canina</option>
-            </select>
-            <label>Data da aplicação</label>
-            <input type="date" name="dataAplicacao" required>
-            <button type="submit">Aplicar vacina</button>
-        </form>
+    <div class="card" th:if="${pets.isEmpty()}">
+        <p class="suave">Cadastre um pet para registrar vacinas. <a th:href="@{/pets}">Cadastrar pet</a></p>
     </div>
 
-    <div class="card">
-        <h2>Carteira de vacinação</h2>
-        <table>
-            <tr>
-                <th>Pet</th>
-                <th>Vacina</th>
-                <th>Aplicação</th>
-                <th>Próxima dose</th>
-            </tr>
-            <tr th:each="v : ${vacinas}">
-                <td th:text="${v.pet.nome}"></td>
-                <td th:text="${v.nome}"></td>
-                <td th:text="${#temporals.format(v.dataAplicacao, 'dd/MM/yyyy')}"></td>
-                <td th:text="${v.dataProximaDose != null ? #temporals.format(v.dataProximaDose, 'dd/MM/yyyy') : '-'}"></td>
-            </tr>
-            <tr th:if="${vacinas.isEmpty()}">
-                <td colspan="4">Nenhuma vacina registrada.</td>
-            </tr>
-        </table>
-    </div>
-</div>
+    <th:block th:unless="${pets.isEmpty()}">
+        <div class="card">
+            <form th:action="@{/vacinas}" method="get" class="linha">
+                <label for="seletorPet">Pet</label>
+                <select id="seletorPet" name="petId" onchange="this.form.submit()">
+                    <option th:each="p : ${pets}" th:value="${p.id}" th:text="${p.nome}"
+                            th:selected="${p.id == petSelecionado}"></option>
+                </select>
+                <noscript><button type="submit" class="pequeno">Ver</button></noscript>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Registrar aplicação</h2>
+            <p class="suave">A data da próxima dose é calculada automaticamente pelo tipo de vacina.</p>
+            <form th:action="@{/vacinas/aplicar}" method="post" class="grid-form">
+                <input type="hidden" name="petId" th:value="${petSelecionado}">
+                <div>
+                    <label for="nome">Vacina</label>
+                    <input id="nome" type="text" name="nome" list="sugestoes" maxlength="100" required>
+                    <datalist id="sugestoes">
+                        <option th:each="tipo : ${tiposVacina}" th:value="${tipo}"></option>
+                    </datalist>
+                </div>
+                <div>
+                    <label for="dataAplicacao">Data da aplicação</label>
+                    <input id="dataAplicacao" type="date" name="dataAplicacao" th:value="${hoje}" th:max="${hoje}" required>
+                </div>
+                <button type="submit">Registrar vacina</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Histórico do pet</h2>
+            <div class="tabela-scroll">
+                <table>
+                    <thead><tr><th>Vacina</th><th>Aplicada em</th><th>Próxima dose</th><th>Situação</th><th></th></tr></thead>
+                    <tbody>
+                    <tr th:each="v : ${vacinas}">
+                        <td th:text="${v.nome()}"></td>
+                        <td th:text="${#temporals.format(v.dataAplicacao(), 'dd/MM/yyyy')}"></td>
+                        <td th:text="${v.dataProximaDose() != null ? #temporals.format(v.dataProximaDose(), 'dd/MM/yyyy') : '-'}"></td>
+                        <td>
+                            <span class="selo selo-pendente" th:if="${v.pendente()}">Reforço próximo/atrasado</span>
+                            <span class="selo selo-realizada" th:unless="${v.pendente()}">Em dia</span>
+                        </td>
+                        <td>
+                            <form th:action="@{/vacinas/{id}/excluir(id=${v.id()})}" method="post"
+                                  onsubmit="return confirm('Remover este registro de vacina?');">
+                                <input type="hidden" name="petId" th:value="${petSelecionado}">
+                                <button type="submit" class="btn-excluir">Remover</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${vacinas.isEmpty()}">
+                        <td colspan="5" class="suave">Nenhuma vacina registrada para este pet.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </th:block>
+</main>
 </body>
 </html>

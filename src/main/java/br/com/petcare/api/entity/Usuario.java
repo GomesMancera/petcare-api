@@ -49,6 +49,10 @@ public class Usuario implements UserDetails {
         this.criadoEm = LocalDateTime.now();
     }
 
+    public boolean isClinica() {
+        return perfil == Perfil.CLINICA;
+    }
+
     // ---- Métodos exigidos pelo contrato UserDetails do Spring Security ----
 
     @Override

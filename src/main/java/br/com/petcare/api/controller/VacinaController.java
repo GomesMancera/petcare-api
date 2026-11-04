@@ -20,6 +20,11 @@ public class VacinaController {
 
     private final VacinaService vacinaService;
 
+    @GetMapping
+    public List<VacinaDto.Response> listar(@AuthenticationPrincipal Usuario usuario) {
+        return vacinaService.listar(usuario).stream().map(VacinaService::toResponse).toList();
+    }
+
     @GetMapping("/pet/{petId}")
     public List<VacinaDto.Response> listarPorPet(@AuthenticationPrincipal Usuario usuario,
                                                   @PathVariable Long petId) {
