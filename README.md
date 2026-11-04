@@ -134,7 +134,6 @@ resources/templates  fragmentos.html (menu/cabeçalho/mensagens reutilizados) + 
 | Mobile Application Development | App React Native/Expo consome esta API (login, refresh de token, pets, consultas, vacinas, notificações) |
 | Banco de dados (Oracle) | Modelo `PC_*`, migrations V1/V2 e índice único parcial |
 | Java Advanced | API REST, Spring Security, Flyway, Thymeleaf, deploy em container |
-| `<DISCIPLINA>` | `<PREENCHER: como foi aplicada e onde está a evidência>` |
 
 ## ✅ Checklist de entrega
 
@@ -142,5 +141,5 @@ resources/templates  fragmentos.html (menu/cabeçalho/mensagens reutilizados) + 
 - [ ] Link do vídeo (máx. 15 min, **todos os integrantes** falando)
 - [x] Variáveis de ambiente configuradas na plataforma (nenhuma senha no repositório)
 - [ ] Senha do Oracle trocada (a anterior ficou no histórico do Git)
-- [ ] Tabela de integração multidisciplinar preenchida
+- [x] Tabela de integração multidisciplinar preenchida
 - [ ] Vídeo mostra a **mesma versão** que está no ar
