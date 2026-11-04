@@ -5,13 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light dark">
     <title th:text="'PetCareIA+ - ' + ${titulo}">PetCareIA+</title>
+    <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
     <link rel="stylesheet" th:href="@{/css/estilo.css}">
 </head>
 <body>
 
 <!-- Menu superior compartilhado por todas as páginas autenticadas -->
 <nav class="topo" th:fragment="menu(ativo)">
-    <strong class="marca">🐾 PetCareIA+</strong>
+    <a class="marca" th:href="@{/dashboard}">
+        <img class="logo" th:src="@{/images/logo.png}" alt="">
+        PetCareIA+
+    </a>
     <div class="links">
         <a th:href="@{/dashboard}" th:classappend="${ativo == 'dashboard'} ? 'ativo'">Dashboard</a>
         <a th:href="@{/pets}" th:classappend="${ativo == 'pets'} ? 'ativo'">Pets</a>

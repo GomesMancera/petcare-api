@@ -4,8 +4,10 @@
 <body>
 <main class="container card-central">
     <div class="card">
-        <h1 class="centro">🐾 PetCareIA+</h1>
-        <p class="centro suave">Acesse sua conta</p>
+        <img class="logo-grande" th:src="@{/images/logo.png}" alt="Logo PetCareIA+">
+        <p class="olho">PetCareIA+</p>
+        <h1 class="centro">Bem-vindo de volta</h1>
+        <p class="centro suave">A clínica e o tutor no mesmo lugar.</p>
 
         <p class="erro" role="alert" th:if="${param.error}">E-mail ou senha inválidos.</p>
         <p class="sucesso" th:if="${param.registrado}">Conta criada! Faça login.</p>
