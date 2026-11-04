@@ -3,7 +3,7 @@
 Plataforma para clínicas veterinárias e tutores: cadastro de pets, **agendamento de consultas** e **carteira de vacinação**,
 com site web (Thymeleaf), API REST (JWT) consumida pelo app mobile e banco Oracle versionado com Flyway.
 
-> **Aplicação online:** `<COLE_AQUI_O_LINK_DO_DEPLOY>`
+> **Aplicação online:** https://petcare-api-aod8.onrender.com
 > **Vídeo de apresentação (até 15 min):** `<COLE_AQUI_O_LINK_DO_VÍDEO>`
 > **App mobile:** https://github.com/RaphaelGomesMancera/petcare-mobileChallenge
 
@@ -138,9 +138,9 @@ resources/templates  fragmentos.html (menu/cabeçalho/mensagens reutilizados) + 
 
 ## ✅ Checklist de entrega
 
-- [ ] Link da aplicação online no topo deste README
+- [x] Link da aplicação online no topo deste README
 - [ ] Link do vídeo (máx. 15 min, **todos os integrantes** falando)
-- [ ] Variáveis de ambiente configuradas na plataforma (nenhuma senha no repositório)
+- [x] Variáveis de ambiente configuradas na plataforma (nenhuma senha no repositório)
 - [ ] Senha do Oracle trocada (a anterior ficou no histórico do Git)
 - [ ] Tabela de integração multidisciplinar preenchida
 - [ ] Vídeo mostra a **mesma versão** que está no ar
