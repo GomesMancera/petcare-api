@@ -5,7 +5,6 @@ com site web (Thymeleaf), API REST (JWT) consumida pelo app mobile e banco Oracl
 
 > **Aplicação online:** https://petcare-api-aod8.onrender.com
 > **Vídeo de apresentação (até 15 min):** https://youtu.be/QBoEd6sayzc
-> **App mobile:** https://github.com/RaphaelGomesMancera/petcare-mobileChallenge
 
 ## 👥 Integrantes
 
